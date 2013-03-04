@@ -1,21 +1,28 @@
 """
 Box API authentication module
 """
+
 __author__ = "Colin Su <littleq0903@gmail.com>"
 
+
+import urllib
 from xml.dom.minidom import parseString
 from lib.xml2dict import XML2Dict
-import urllib
 import common
+
+
+API_URL = "https://www.box.com/api/1.0/rest"
+API_AUTH_URL = "https://www.box.com/api/1.0/auth/"
+
 
 def get_ticket(api_key):
     http_params = {
-            'action': 'get_ticket',
-            'api_key': api_key,
-            }
+        'action': 'get_ticket',
+        'api_key': api_key,
+    }
     http_params_encoded = urllib.urlencode(http_params)
 
-    opener = urllib.urlopen( "%s?%s" % (common.API_V1_URL, http_params_encoded) )
+    opener = urllib.urlopen( "%s?%s" % (API_URL, http_params_encoded) )
     response = opener.read()
     opener.close()
 
@@ -26,21 +33,23 @@ def get_ticket(api_key):
     # TODO: exception handling
     return xmlData
 
+
 def open_for_auth_ticket(ticket):
-    ticket_url = "https://www.box.com/api/1.0/auth/" + ticket
+    ticket_url = API_AUTH_URL + ticket
     # TODO: use open browser action instead of print url
     print "Please go to the following url for authentication: %s" % ticket_url
     return ticket_url
 
+
 def get_auth_token(api_key, ticket):
     http_params = {
-            'action': 'get_auth_token',
-            'api_key': api_key,
-            'ticket': ticket
-            }
+        'action': 'get_auth_token',
+        'api_key': api_key,
+        'ticket': ticket
+    }
     http_params_encoded = urllib.urlencode(http_params)
 
-    opener = urllib.urlopen("%s?%s" % (common.API_V1_URL, http_params_encoded) )
+    opener = urllib.urlopen("%s?%s" % (API_URL, http_params_encoded) )
     response = opener.read()
     opener.close()
 
